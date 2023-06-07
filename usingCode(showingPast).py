@@ -3,9 +3,23 @@ import pandas as pd
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 
+# Definir a função create_dataset
+def create_dataset(data, lookback):
+    X, Y = [], []
+    for i in range(len(data) - lookback):
+        X.append(data[i:i+lookback, 0])
+        Y.append(data[i+lookback, 0])
+    return np.array(X), np.array(Y)
+
+# Registrar a métrica personalizada
+def r_squared(y_true, y_pred):
+    SS_res = tf.keras.backend.sum(tf.keras.backend.square(y_true - y_pred))
+    SS_tot = tf.keras.backend.sum(tf.keras.backend.square(y_true - tf.keras.backend.mean(y_true)))
+    return 1 - SS_res / (SS_tot + tf.keras.backend.epsilon())
+
 # Carregar dados históricos
 data = pd.read_csv('dados.csv')  # Substitua 'dados.csv' pelo caminho do seu arquivo de dados
-prices = data['Preço'].values.reshape(-1, 1)
+prices = data['Close'].values.reshape(-1, 1)
 
 # Pré-processamento dos dados
 scaler = MinMaxScaler(feature_range=(0, 1))
@@ -20,8 +34,9 @@ test_data = scaled_prices[train_size:]
 lookback = 30  # Número de períodos anteriores a serem considerados
 X_test, Y_test = create_dataset(test_data, lookback)
 
-# Carregar o modelo
-loaded_model = tf.keras.models.load_model('modelo.h5')
+# Carregar o modelo com a métrica personalizada registrada
+with tf.keras.utils.custom_object_scope({'r_squared': r_squared}):
+    loaded_model = tf.keras.models.load_model('modelo.h5')
 
 # Usar o modelo carregado para fazer previsões
 predictions = loaded_model.predict(X_test)
