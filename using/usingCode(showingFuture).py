@@ -27,7 +27,7 @@ scaler = MinMaxScaler(feature_range=(0, 1))
 scaled_prices = scaler.fit_transform(prices)
 
 # Preparar dados de teste
-lookback = 10  # Número de períodos anteriores a serem considerados
+lookback = 7  # Número de períodos anteriores a serem considerados
 X_test, Y_test = create_dataset(scaled_prices, lookback)
 
 # Carregar o modelo com a métrica personalizada registrada
@@ -35,7 +35,7 @@ with tf.keras.utils.custom_object_scope({'r_squared': r_squared}):
     loaded_model = tf.keras.models.load_model('modelo.h5')
 
 # Fazer previsões para os próximos preços
-num_predictions = 30  # Número de previsões para os próximos dias
+num_predictions = 7  # Número de previsões para os próximos dias
 last_sequence = X_test[-1]  # Última sequência de entrada conhecida
 
 predicted_prices = []  # Lista para armazenar as previsões

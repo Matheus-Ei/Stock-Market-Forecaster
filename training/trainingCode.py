@@ -26,7 +26,7 @@ def create_dataset(data, lookback):
         Y.append(data[i+lookback, 0])
     return np.array(X), np.array(Y)
 
-lookback = 5  # Número de períodos anteriores a serem considerados
+lookback = 7  # Número de períodos anteriores a serem considerados
 X_train, Y_train = create_dataset(train_data, lookback)
 
 # Construir o modelo de rede neural
@@ -71,7 +71,7 @@ def r_squared(y_true, y_pred):
 model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse', 'mae', r_squared])
 
 # Treinar o modelo
-model.fit(X_train, Y_train, epochs=100, batch_size=32)
+model.fit(X_train, Y_train, epochs=20, batch_size=32)
 
 # Salvar o modelo
 model.save('modelo.h5')

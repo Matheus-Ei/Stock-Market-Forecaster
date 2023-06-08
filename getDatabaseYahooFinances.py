@@ -5,7 +5,7 @@ ticker = "MSFT"  # Substitua pelo ticker do ativo desejado
 
 # Definir o intervalo de datas
 start_date = "2020-01-01"
-end_date = "2023-01-01"
+end_date = "2023-06-05"
 
 # Obter os dados do Yahoo Finance
 data = yf.download(ticker, start=start_date, end=end_date)
