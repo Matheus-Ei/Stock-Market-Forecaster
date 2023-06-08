@@ -1,7 +1,7 @@
 import yfinance as yf
 
 # Definir o ticker do ativo
-ticker = "^DJI"  # Substitua pelo ticker do ativo desejado
+ticker = "MSFT"  # Substitua pelo ticker do ativo desejado
 
 # Definir o intervalo de datas
 start_date = "2020-01-01"
