@@ -59,6 +59,7 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dropout(0.2),
 
     tf.keras.layers.LSTM(8),
+    tf.keras.layers.Dense(8),
     tf.keras.layers.Dense(1),
 ])
 

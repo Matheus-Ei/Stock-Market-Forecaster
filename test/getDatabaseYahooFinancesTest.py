@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 
 # Definir os tickers dos ativos desejados
-tickers = ["MSFT"]  # Substitua pelos tickers dos ativos desejados
+tickers = ["MSFT", "AAPL", "GOOGL", "GC=F", "^IXIC", "^DJI", "^GSPC"]  # Substitua pelos tickers dos ativos desejados
 
 # Definir o intervalo de datas
 start_date = "2018-01-01"

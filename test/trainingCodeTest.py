@@ -4,6 +4,7 @@ import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from keras import backend as K
 from datetime import datetime, timedelta
+from keras.callbacks import ModelCheckpoint, EarlyStopping
 
 # Carregar dados históricos
 data = pd.read_csv(r'test\test.csv')  # Essa parte do codigo le o arquivo
@@ -20,32 +21,46 @@ def create_dataset(data):
     i=0
     entrada, saidaEsperada = [], []
     while i != len(data) - 1:
-        entrada.append([float(prices[i, 0])])
-        saidaEsperada.append([float(prices[i + 1, 0])])
+        entrada.append([float(scaled_prices[i, 0])])
+        saidaEsperada.append([float(scaled_prices[i + 1, 0])])
         i = i + 1
         print(i)
     return np.array(entrada), np.array(saidaEsperada)
 
-X_train, Y_train = create_dataset(data)
-
-# Remodelar a entrada para ter uma dimensão adicional
-entrada = np.expand_dims(X_train, axis=1)
-saidaEsperada = np.expand_dims(Y_train, axis=1)
+entrada, saidaEsperada = create_dataset(data)
 
 print(entrada)
 print("-----------------------------------------------------------------------------------------------------")
 print(saidaEsperada)
 
 
-# Construir o modelo de rede neural
+# Definir o caminho onde deseja salvar os checkpoints
+checkpoint_path = 'test\check\modelo-{epoch:02d}.h5'
+
+# Criar um objeto ModelCheckpoint
+checkpoint = ModelCheckpoint(
+    checkpoint_path,
+    monitor='loss',  # Métrica para monitorar e decidir quando salvar o modelo
+    save_best_only=True,  # Salvar apenas o melhor modelo com base na métrica monitorada
+    mode='min',  # Modo da métrica (por exemplo, 'min' para minimizar a métrica)
+    verbose=1  # Exibir mensagens de status durante o salvamento do modelo
+)
+
+# Criar um objeto EarlyStopping
+early_stopping = EarlyStopping(
+    monitor='loss',  # Métrica para monitorar e decidir quando interromper o treinamento
+    patience=5,  # Número de épocas sem melhoria após as quais o treinamento é interrompido
+    mode='min',  # Modo da métrica (por exemplo, 'min' para minimizar a métrica)
+    verbose=1  # Exibir mensagens de status durante a parada antecipada
+)
+
+
 model = tf.keras.models.Sequential([
-    tf.keras.layers.Dense(1),
+    tf.keras.layers.LSTM(1024, return_sequences=True, input_shape=(3, 1)),
+    tf.keras.layers.Dropout(0.8),
 
     tf.keras.layers.LSTM(512, return_sequences=True),
-    tf.keras.layers.Dropout(0.9),
-
-    tf.keras.layers.LSTM(512, return_sequences=True),
-    tf.keras.layers.Dropout(0.9),
+    tf.keras.layers.Dropout(0.8),
 
     tf.keras.layers.LSTM(512, return_sequences=True),
     tf.keras.layers.Dropout(0.5),
@@ -66,8 +81,11 @@ model = tf.keras.models.Sequential([
     tf.keras.layers.Dropout(0.2),
 
     tf.keras.layers.LSTM(8),
+    tf.keras.layers.Dense(8),
     tf.keras.layers.Dense(1),
 ])
+
+
 
 @tf.autograph.experimental.do_not_convert
 def r_squared(y_true, y_pred):
@@ -79,7 +97,7 @@ def r_squared(y_true, y_pred):
 model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse', 'mae', r_squared])
 
 # Treinar o modelo
-model.fit(entrada, saidaEsperada, epochs=100, batch_size=32)
+model.fit(entrada, saidaEsperada, epochs=50, batch_size=32, callbacks=[checkpoint, early_stopping])
 
 # Salvar o modelo
 model.save('modelo.h5')

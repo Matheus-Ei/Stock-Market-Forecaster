@@ -15,4 +15,6 @@ selected_data = data[["Close", "Volume"]].copy()
 selected_data.reset_index(inplace=True)
 
 # Salvar os dados em um arquivo CSV
-selected_data.to_csv("dados.csv", index=False)
+selected_data.to_csv(r"using\dados.csv", index=False)
+selected_data.to_csv(r"training\dados.csv", index=False)
+
