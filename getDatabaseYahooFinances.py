@@ -1,10 +1,10 @@
 import yfinance as yf
 
 # Definir o ticker do ativo
-ticker = "AAPL"  # Substitua pelo ticker do ativo desejado
+ticker = "^DJI"  # Substitua pelo ticker do ativo desejado
 
 # Definir o intervalo de datas
-start_date = "1986-01-01"
+start_date = "2020-01-01"
 end_date = "2023-01-01"
 
 # Obter os dados do Yahoo Finance

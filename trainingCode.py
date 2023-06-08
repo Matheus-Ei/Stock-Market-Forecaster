@@ -30,12 +30,23 @@ X_train, Y_train = create_dataset(train_data, lookback)
 
 # Construir o modelo de rede neural
 model = tf.keras.models.Sequential([
-    tf.keras.layers.LSTM(128, return_sequences=True, input_shape=(lookback, 1)),
-    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.LSTM(1024, return_sequences=True, input_shape=(lookback, 1)),
+    tf.keras.layers.Dropout(0.5),
+
+    tf.keras.layers.LSTM(512, return_sequences=True),
+    tf.keras.layers.Dropout(0.5),
+
+    tf.keras.layers.LSTM(256, return_sequences=True),
+    tf.keras.layers.Dropout(0.5),
+
+    tf.keras.layers.LSTM(128, return_sequences=True),
+    tf.keras.layers.Dropout(0.5),
+
     tf.keras.layers.LSTM(64, return_sequences=True),
-    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dropout(0.5),
+
     tf.keras.layers.LSTM(32),
-    tf.keras.layers.Dense(1)
+    tf.keras.layers.Dense(1),
 ])
 
 def r_squared(y_true, y_pred):
@@ -51,3 +62,5 @@ model.fit(X_train, Y_train, epochs=100, batch_size=32)
 
 # Salvar o modelo
 model.save('modelo.h5')
+
+
