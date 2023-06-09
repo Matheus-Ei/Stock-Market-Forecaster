@@ -2,10 +2,10 @@ import yfinance as yf
 import pandas as pd
 
 # Definir os tickers dos ativos desejados
-tickers = ["MSFT", "AAPL", "GOOGL", "GC=F", "^IXIC", "^DJI", "^GSPC"]  # Substitua pelos tickers dos ativos desejados
+tickers = ["AAPL"]  # Substitua pelos tickers dos ativos desejados
 
 # Definir o intervalo de datas
-start_date = "2018-01-01"
+start_date = "2003-01-01"
 end_date = "2023-01-01"
 
 # Criar um DataFrame vazio para armazenar os dados
@@ -29,4 +29,4 @@ for ticker in tickers:
     all_data = pd.concat([all_data, selected_data], ignore_index=True)
 
 # Salvar os dados em um arquivo CSV
-all_data.to_csv(r"test\test.csv", index=False)
+all_data.to_csv("dados.csv", index=False)

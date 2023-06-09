@@ -29,7 +29,7 @@ scaler = MinMaxScaler(feature_range=(0, 1))
 scaled_prices = scaler.fit_transform(prices)
 
 # Preparar dados de teste
-lookback = 3  # Número de períodos anteriores a serem considerados
+lookback = 30  # Número de períodos anteriores a serem considerados
 X_test, Y_test = create_dataset(data)
 
 # Carregar o modelo com a métrica personalizada registrada
@@ -37,7 +37,7 @@ with tf.keras.utils.custom_object_scope({'r_squared': r_squared}):
     loaded_model = tf.keras.models.load_model('modelo.h5')
 
 # Fazer previsões para os próximos preços
-num_predictions = 7  # Número de previsões para os próximos dias
+num_predictions = 30  # Número de previsões para os próximos dias
 last_sequence = X_test[-lookback:]  # Última sequência de entrada conhecida
 
 predicted_prices = []  # Lista para armazenar as previsões
@@ -58,6 +58,9 @@ plt.figure(figsize=(14,7))  # Definir o tamanho da figura
 
 plt.plot(data['Close'], label='Valor Real')
 plt.plot(range(len(Y_test), len(Y_test) + num_predictions), predicted_prices, label='Previsão')
+
+# Adicionar a linha de conexão entre o último valor conhecido e a primeira previsão
+plt.plot([len(Y_test), len(Y_test)], [Y_test[-1], predicted_prices[0]], color='red')
 
 # Adicionar títulos e rótulos
 plt.title('Previsão vs Valor Real')

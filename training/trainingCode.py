@@ -5,7 +5,7 @@ from sklearn.preprocessing import MinMaxScaler
 from keras import backend as K
 
 # Carregar dados históricos
-data = pd.read_csv('training\dados.csv')  # Essa parte do codigo le o arquivo
+data = pd.read_csv('dados.csv')  # Essa parte do codigo le o arquivo
 prices = data['Close'].values.reshape(-1, 1) # Define que "prices" sera atribuido a coluna close do arquivo e faz um reshape que significa que ele vai mudar a forma, nesse caso para que tenha apenas uma coluna
 
 # Pré-processamento dos dados

@@ -49,7 +49,7 @@ for _ in range(num_predictions):
     last_sequence = np.append(last_sequence[1:], next_price)
 
 # Desfazer a escala dos dados de teste
-Y_test = scaler.inverse_transform(Y_test.reshape(-1, 1))
+Y_test = scaler.inverse_transform(Y_test.reshape(-1, 1)) 
 
 # Plotar os resultados
 plt.plot(Y_test, label='Valor Real')
