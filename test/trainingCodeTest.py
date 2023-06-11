@@ -10,7 +10,7 @@ from sklearn.linear_model import LinearRegression
 # Carregar dados históricos
 data = pd.read_csv("dados.csv")  # Essa parte do codigo le o arquivo
 pre_prices = data[['Close']].to_numpy().reshape(-1, 1) # Define que "prices" sera atribuido a coluna close do arquivo e faz um reshape que significa que ele vai mudar a forma, nesse caso para que tenha apenas uma coluna
-print(pre_prices[1, 0])  # Imprime o "Date" do segundo registro
+print(pre_prices[1, 0])
 print(len(data))
 
 scaler = MinMaxScaler(feature_range=(0, 1)) 
@@ -33,15 +33,6 @@ y_train = np.array(y_train)
 print(x_train)
 print("-----------------------------------------------------------------------------------------------------")
 print(y_train)
-
-
-# Criar um objeto EarlyStopping
-early_stopping = EarlyStopping(
-    monitor='loss',  # Métrica para monitorar e decidir quando interromper o treinamento
-    patience=3,  # Número de épocas sem melhoria após as quais o treinamento é interrompido
-    mode='min',  # Modo da métrica (por exemplo, 'min' para minimizar a métrica)
-    verbose=1  # Exibir mensagens de status durante a parada antecipada
-)
 
 
 model = tf.keras.models.Sequential([
@@ -84,13 +75,22 @@ def r_squared(y_true, y_pred):
 
 
 
+# Criar um objeto EarlyStopping
+early_stopping = EarlyStopping(
+    monitor='r_squared',  # Métrica para monitorar e decidir quando interromper o treinamento
+    patience=3,  # Número de épocas sem melhoria após as quais o treinamento é interrompido
+    mode='max',  # Modo da métrica (por exemplo, 'min' para minimizar a métrica)
+    verbose=1  # Exibir mensagens de status durante a parada antecipada
+)
+
+
+
 # Compilar o modelo
 model.compile(optimizer='adam', loss='mean_squared_error', metrics=['mse', 'mae', r_squared])
 
-
-
 # Treinar o modelo
 model.fit(x_train, y_train, epochs=50, batch_size=32, callbacks=[early_stopping])
+
 # Salvar o modelo
 model.save('modelo.h5')
 

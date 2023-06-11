@@ -2,10 +2,10 @@ import yfinance as yf
 import pandas as pd
 
 # Definir os tickers dos ativos desejados
-tickers = ["AAPL"]  # Substitua pelos tickers dos ativos desejados
+tickers = ["MSFT"]  # Substitua pelos tickers dos ativos desejados
 
 # Definir o intervalo de datas
-start_date = "2003-01-01"
+start_date = "2018-01-01"
 end_date = "2023-01-01"
 
 # Criar um DataFrame vazio para armazenar os dados
