@@ -2,6 +2,7 @@
 import yahooquery as yq
 import yfinance as yf
 import pandas as pd
+import requests
 
 def get_events(ticker, past_days = 1):
     # Get the corporate events for the ticker
@@ -14,6 +15,33 @@ def get_events(ticker, past_days = 1):
 
     last_description = description[description_length - past_days] # Get the description
     return last_description # Return the last description
+
+
+def get_news(ticker):
+    url = "https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers={}&interval=5min&apikey=1RRNP1ITPIQ7QFV8".format(ticker)
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        data = data['feed']
+
+        sentiment = []
+
+        for e in data:
+            if e['overall_sentiment_score'] > 0.15:
+                sentiment.append(1)
+            elif e['overall_sentiment_score'] > 0.35:
+                sentiment.append(2)
+            elif e['overall_sentiment_score'] < -0.15:
+                sentiment.append(-1)
+            elif e['overall_sentiment_score'] < -0.35:
+                sentiment.append(-2)
+            elif e['overall_sentiment_score'] < 0.15 and e['overall_sentiment_score'] > -0.15:
+                sentiment.append(0)
+
+        sentiment = sum(sentiment) / len(sentiment)
+        return sentiment
+    else:
+        return None
 
 
 def get_direction(ticker):
@@ -50,6 +78,12 @@ def get_recomendation(ticker):
     tk = yq.Ticker(ticker)
     df = tk.technical_insights
     recomendation = df[ticker]['recommendation']['rating']
+    if recomendation == "BUY":
+        recomendation = 1
+    elif recomendation == "HOLD":
+        recomendation = 0
+    elif recomendation == "SELL":
+        recomendation = -1
 
     return recomendation
 
@@ -100,6 +134,7 @@ def get_expo_average(ticker):
 
     return {'ema7': ema7, 'ema12': ema12, 'ema26': ema26, 'ema60': ema60, 'ema90': ema90, 'ema120': ema120}
 
+
 def get_MACD(ticker):
     ret = get_expo_average(ticker)
     ema12 = ret['ema12']
@@ -132,7 +167,9 @@ def get_RSI(ticker):
     RS = roll_up / roll_down # Calculate the RS
     RSI = 100.0 - (100.0 / (1.0 + RS)) # Calculate the RSI
 
-    return RSI
+    rsi = RSI.tolist() 
+
+    return rsi
 
 
 def get_candle(ticker):
@@ -216,6 +253,5 @@ def get_last_30_days_pattern(ticker):
 
 # Execute only if the namespace == main
 if __name__ == "__main__":
-    ret = get_last_30_days_pattern("AAPL")
-    for e in ret:
-        print(e, "\n\n")
+    ret = get_news("AAPL")
+    print(ret)
