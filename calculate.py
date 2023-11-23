@@ -7,6 +7,7 @@ def main(ticker):
     rate_neutral = 100
 
     rec = gd.get_recomendation(ticker)
+    news_sent = gd.get_news(ticker)
 
     average = gd.get_average(ticker)
     expo_average = gd.get_expo_average(ticker)
@@ -64,6 +65,27 @@ def main(ticker):
         rate_down = rate_down * 1.05
         rate_up = rate_up * 0.95
         rate_neutral = rate_neutral * 1.05
+
+        if news_sent > 0.35:
+            rate_up = rate_up * 1.25
+            rate_down = rate_down * 0.9
+            rate_neutral = rate_neutral * 1.01
+        elif news_sent < -0.35:
+            rate_down = rate_down * 1.25
+            rate_up = rate_up * 0.9
+            rate_neutral = rate_neutral * 1.01
+        elif news_sent > 0.15:
+            rate_up = rate_up * 1.05
+            rate_down = rate_down * 0.95
+            rate_neutral = rate_neutral * 1.05
+        elif news_sent < -0.15:
+            rate_down = rate_down * 1.05
+            rate_up = rate_up * 0.95
+            rate_neutral = rate_neutral * 1.05
+        elif news_sent > -0.05 and news_sent < 0.05:
+            rate_down = rate_down * 0.95
+            rate_up = rate_up * 0.95
+            rate_neutral = rate_neutral * 1.10
 
     print("Rate Up: ", int(rate_up))
     print("Rate Down: ", int(rate_down))
